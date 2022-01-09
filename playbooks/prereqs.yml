@@ -1,0 +1,5 @@
+---
+- name: Install required python modules
+  pip:
+    name:
+      - docker>5.0.0

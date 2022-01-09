@@ -1,0 +1,30 @@
+---
+- name: Create nginx container
+  community.docker.docker_container:
+    name: nginx-proxy
+    image: nginxproxy/nginx-proxy
+    state: started
+    restart_policy: unless-stopped
+    recreate: yes
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /opt/reverse-proxy/vhost:/etc/nginx/vhost.d
+      - /opt/reverse-proxy/certs:/etc/nginx/certs
+      - /opt/reverse-proxy/html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+- name: Create nginx acme container
+  community.docker.docker_container:
+    name: nginx-proxy-acme
+    image: nginxproxy/acme-companion
+    state: started
+    restart_policy: unless-stopped
+    recreate: yes
+    volumes_from: nginx-proxy
+    volumes:
+      - /opt/reverse-proxy/acme:/etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    env:
+      DEFAULT_EMAIL: "admin@seitle.io"

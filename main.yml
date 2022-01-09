@@ -4,3 +4,6 @@
   roles:
     - seitleio-default-role
     - ansible-role-docker
+  tasks:
+    - include_tasks: playbooks/prereqs.yml
+    - include_tasks: playbooks/nginx_reverse_proxy.yml
